@@ -1,3 +1,4 @@
+==================
     Test Bank
 ==================
 
@@ -65,6 +66,7 @@ Testing
 The system has been unittested quite thoroughly, using factory_boy as a fixture replacement
 
 To run the tests::
+
     $ python manage.py test --settings=config.settings.test
 
 
