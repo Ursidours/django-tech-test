@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Details of your loan"%}{% endblock %}
+
+{% block content %}
+
+<section>
+	<h6> Loan of {{ object.amount }} {{object.currency}} </h6>
+	<dl class="row">
+		<dt class="col-sm-3">{% trans "Business name" %}</dt><dd class="col-sm-9">{{ object.business.name }}</dd>
+		<dt class="col-sm-3">{% trans "Business number" %}</dt><dd class="col-sm-9">{{ object.business.company_number }}</dd>
+		<dt class="col-sm-3">{% trans "Stated reason" %}</dt><dd class="col-sm-9">{{ object.reason }}</dd>
+		<dt class="col-sm-3">{% trans "Duration in days" %}</dt><dd class="col-sm-9">{{ object.duration }}</dd>
+		<dt class="col-sm-3">{% trans "Agreed interest rate" %}</dt><dd class="col-sm-9">{{ object.interest_rate }}</dd>
+		<dt class="col-sm-3">{% trans "Status" %}</dt><dd class="col-sm-9">{{ object.get_status_display }}</dd>
+	</dl>
+</section>
+
+{% if object.status == 0 %}
+	
+  <section>
+  	<h6>{% trans "This loan is still pending approval, you can request its cancellation"%}</h6>
+    <form method="POST" id="cancel_form" action="{% url 'borrowing:cancel_loan'  pk=object.pk %}">
+    {% csrf_token %}
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">{% trans "Cancel this loan" %}</button>
+      </div>
+    </div>
+  </form>
+ </section>
+
+{% endif %}
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+$('#cancel_form').submit(function(event){
+
+	event.preventDefault()
+	swal({
+	  text: "{% trans "Please confirm the cancellation of this loan" %}",
+	  showCancelButton: true,
+	  confirmButtonText: 'Submit',
+	  showLoaderOnConfirm: true,
+	  allowOutsideClick: false,
+	}).then(function(){
+		$('#cancel_form').unbind('submit')
+		$('#cancel_form').submit()
+	})
+})
+</script>
+
+{% endblock %}

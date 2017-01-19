@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Setting up a new business"%}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1> Setting up a new business </h1>
+  <form class="form-horizontal" method="POST" action="{% url 'borrowing:update_business'  pk=object.pk %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">{% trans "Update my business information"%}</button>
+      </div>
+    </div>
+  </form>
+  <section>
+	    <form method="POST" id="delete_form" action="{% url 'borrowing:delete_business'  pk=object.pk %}">
+	    {% csrf_token %}
+	    <div class="control-group">
+	      <div class="controls">
+	        <button type="submit" class="btn">{% trans "Delete this business"%}</button>
+	      </div>
+	    </div>
+	  </form>
+  </section>
+ </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+$('#delete_form').submit(function(event){
+
+	event.preventDefault()
+	swal({
+	  text: "{% trans "Please confirm the deletion of this business" %}",
+	  showCancelButton: true,
+	  confirmButtonText: 'Submit',
+	  showLoaderOnConfirm: true,
+	  allowOutsideClick: false,
+	}).then(function(){
+		$('#delete_form').unbind('submit')
+		$('#delete_form').submit()
+	})
+})
+</script>
+
+{% endblock %}

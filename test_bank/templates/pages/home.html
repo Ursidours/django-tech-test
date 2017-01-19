@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+
+{% if user.is_authenticated %}
+	
+	
+	<div class="jumbotron">
+	    <h1 class="display-6">{% trans "Welcome" %} {{ user.first_name }} {{ user.last_name }}!</h1>
+	    <p class="lead">
+	    {% blocktrans %}
+	    	
+	    	As a registered user of Test Bank, you now have access to our premium Borrowing Interface 
+	    	to administer your loans. Thank you for your trust.  	
+	    	
+	    {% endblocktrans %}
+	    </p>
+	        <p><a class="btn btn-lg btn-success" href="{% url 'borrowing:home' %}" class="btn btn-primary">{% trans "My admin interface" %}</a></p>
+    </div>
+
+	
+{% else %}
+
+		
+	{% trans "Welcome on Test Bank"%}
+	
+	<div class="jumbotron">
+	    <h1 class="display-6">{% trans "Get Started" %}</h1>
+	    <p class="lead">
+	    {% blocktrans %}
+	    	
+	    	Test Bank allows you to get a loan fast, without any of the boilerplate and crazy nonsense of conventional high-street banks.  	    	
+	    	
+	    {% endblocktrans %}
+	    </p>
+	        <p><a class="btn btn-lg btn-success" href="{% url 'account_signup' %}" role="button">{% trans "Sign up for free" %}</a></p>
+	        <p><a class="btn btn-lg btn-success" href="{% url 'account_login' %}" role="button">{% trans "Already a member? Login" %}</a></p>
+    </div>
+
+
+{% endif %}
+
+{% endblock %}

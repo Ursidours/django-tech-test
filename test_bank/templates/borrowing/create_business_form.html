@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Setting up a new business"%}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1> Setting up a new business </h1>
+  <form class="form-horizontal" method="POST" action="{% url 'borrowing:create_business' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">{% trans "Create my business "%}</button>
+      </div>
+    </div>
+  </form>
+ </div>
+{% endblock %}

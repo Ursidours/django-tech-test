@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+
+{% if borrower %}
+
+
+	 <div class="text-success">
+		{% trans "Your borrower account is correctly set up." %}<i class="fa fa fa-check-square-o" aria-hidden="true"></i>
+	 </div>
+
+	 {# REGISTERED BUSINESSES #}
+	 
+	<section>
+	 {% if businesses %}
+
+   		<h4>{% trans "Businesses you have registered" %}</h4>
+   
+    		<div class="table-responsive">
+	    	<table class="table table-hover">
+	    		<thead>
+	    			<tr>
+	    				<th>{% trans "Name" %}</th><th>{% trans "Address" %}</th><th>{% trans "Related loans" %}</th><th></th>
+	    			</tr>
+	    		</thead>
+	    		<tbody>
+				{% for business in businesses %}
+		  			<tr>
+			    		<td>{{ business.name }}</td>
+			    		<td>{{ business.address }}</td>
+			    		<td>{{ business.loan_nb }}</td>
+						<td> 
+						{% if not business.loan_nb %}
+						<a href="{% url "borrowing:update_business"  pk=business.pk %}">
+							<i class="fa fa-pencil-square-o" title="{% trans "Edit this business" %}"></i>
+							</a>
+						{% endif %}
+						</td>
+		  			</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<h4>{% trans "Register your first business" %}</h4>
+	{% endif %}
+		
+		<a class="btn btn-primary" href="{% url "borrowing:create_business" %}">{% trans "Add a business" %}</a>
+	</section>
+	
+	{# LOANS #}
+
+	{% if businesses %}
+		<section>
+	
+		{% if loans %}
+			<h4>{% trans "Your loans " %}</h4>
+			<div class="table-responsive">
+			    <table class="table table-hover">
+				    <thead>
+				    	<tr>
+				    	<th>{% trans "Amount" %}</th><th>{% trans "Currency" %}</th><th>{% trans "Date" %}</th><th>{% trans "Status" %}</th><th></th>
+				    	</tr>
+				    </thead>
+				    <tbody>
+					{% for loan in loans %}
+					  <tr>
+					    <td>{{ loan.amount }}</td>
+					    <td>{{ loan.currency }}</td>
+					    <td>{{ loan.created_at }}</td>
+					    <td>{{ loan.get_status_display }}</td>
+						<td>
+							<a href="{% url "borrowing:loan_detail"  pk=loan.pk %}">
+								<i class="fa fa-pencil-square-o" title="{% trans "View loan details" %}"></i>
+							</a>
+						</td>
+					  </tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<h4>{% trans "Apply for your first loan" %}</h4>
+		{% endif %}
+		
+			<a class="btn btn-primary vertical-space" href="{% url "borrowing:create_loan" %}">{% trans "Apply for a new loan" %}</a>
+		</section>
+	{% endif %}
+{% else %}
+
+  <div>
+    {% trans "You need to activate your borrower account." %}
+    <a class="btn btn-primary" href="{% url "borrowing:activate_account" %}">{% trans "Apply to borrow" %}</a>
+  </div>
+
+
+{% endif %}
+
+
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

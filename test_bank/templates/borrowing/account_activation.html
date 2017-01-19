@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Account Verification"%}{% endblock %}
+
+{% block css %}
+{# Adding CSS for the phone_number input #}
+<link rel="stylesheet" href="{% static "css/intlTelInput.css" %}">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+  <h1>{{ user.username }}</h1>
+  <form class="form-horizontal" method="POST" action="{% url 'borrowing:activate_account' %}">
+    {% csrf_token %}
+
+    {{ form.borrower_form|crispy }}
+
+    <a class="btn btn-primary" id="verify-phone-btn" href="{% url "borrowing:verify_phone" %}">{% trans "Send phone verification code" %}</a>
+ 
+	<div class="vertical-space">
+    	{{ form.user_form|crispy }}
+	</div>
+    <div class="control-group">
+      <div class="controls">
+        <button type="submit" class="btn">{% trans "Submit my application"%}</button>
+      </div>
+    </div>
+  </form>
+ </div>
+{% endblock %}
+
+{% block javascript %}
+
+<script src="{% static 'js/intlTelInput.min.js' %}"></script>
+<script>
+
+	$('#id_phone_number').intlTelInput();
+
+	
+	$('#verify-phone-btn').click( function(event){
+		event.preventDefault()
+		var phone_number = $('#id_phone_number').intlTelInput("getNumber")
+		$('#id_phone_number').val(phone_number)
+		/* if (isValidNumber(phone_number) === false){
+			swal({
+			  title: 'Invalid phone number',
+			  text: 'Please check the phone number you provided and retry',
+			  type:'error',
+			})
+			return true
+		} */
+		swal({
+		  title: 'Verify your phone',
+		  text: "{% trans "A 5-letter code will be sent to your phone number" %}" + phone_number,
+		  showCancelButton: true,
+		  confirmButtonText: 'Submit',
+		  showLoaderOnConfirm: true,
+		  preConfirm: function () {
+		    return new Promise(function (resolve, reject) {
+		    	$.ajax({
+			    	type: 'POST',
+			    	url: $('#verify-phone-btn').attr('href'),
+			    	data: {'phone_number': phone_number},
+			        success: function(response){
+						resolve()
+			       },
+			       error: function(xhr, errmsg, err){
+			    	   reject("{% trans "The SMS could not be sent. Error:" %}" + errmsg)
+			       },
+			   });	
+		    })
+		  },
+		  allowOutsideClick: false
+		}).then(function (email) {
+		  swal({
+		    type: 'success',
+		    title: "{% trans 'Code sent' %}",
+		    html: "{% trans 'Please check your phone and complete the form' %}",
+		  })
+		})
+	})
+
+
+</script>
+<script src="{% static 'js/utils.js' %}"></script>
+
+{% endblock %}
